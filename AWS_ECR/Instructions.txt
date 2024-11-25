@@ -1,0 +1,39 @@
+How to Use AWS ECR
+Here’s a step-by-step guide to using AWS ECR:
+
+1. Create a Repository
+Go to the ECR Dashboard in the AWS Management Console.
+Click Create Repository.
+Choose either Public or Private repository and configure options (e.g., name, encryption settings, tag immutability).
+or
+Using AWS CLI (user should have policy AmazonEC2ContainerRegistryFullAccess)
+
+    aws ecr create-repository --repository-name my-first-repo
+
+Immutable Tags ensure that your container images can't be overwritten, maintaining their integrity and consistency.
+Image Scanning helps detect security vulnerabilities in images, ensuring only safe, secure images are deployed.
+
+    aws ecr create-repository --repository-name flask-app-repo --region  ap-northeast-1 --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=true
+
+
+2. Authenticate Docker to ECR
+Use the AWS CLI to retrieve an authentication token:
+    aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 156041400331.dkr.ecr.ap-northeast-1.amazonaws.com
+
+
+3. Push an Image to the Repository
+    Build the Docker image ( if already created as we created in docker folder so we can use it or can create new one)
+        docker build -t flask-app-repo . 
+        ---( docker build -t flask-app-docker-image -f Docker/Dockerfile .)
+       
+
+    Tag the image for the ECR repository
+        docker tag flask-app-docker-image 156041400331.dkr.ecr.ap-northeast-1.amazonaws.com/flask-app-repo:latest
+    Push the image to ECR
+
+4. Pull an Image from the Repository
+Pull the image when needed
+
+5. Integrate with AWS Services
+Use the stored image with Amazon ECS, AWS Lambda (container images), 
+or Amazon EKS by specifying the ECR image URL in your deployment configuration.

@@ -1,0 +1,44 @@
+
+--- for this we will use flask app in docker 
+Step 1: Install Prerequisites
+Make sure you have the following installed:
+
+Docker: Download from Docker's official site.
+AWS CLI: Install from AWS CLI Official Documentation.
+AWS Account: Create one at AWS.
+
+Step 2: Set Up Your Application
+Create a sample application, e.g., a Python Flask app
+    mkdir my-flask-app
+    cd my-flask-app
+
+
+Inside the folder, create the following files:
+    app.py:
+This is a simple Python Flask application.
+
+create requirements.txt file:
+    pip freeze > requirements.txt.
+
+
+Step 3: Create a Dockerfile
+The Dockerfile defines how your application is containerized further see Dockerfile.
+
+
+Step 4: Build the Docker Image
+Run the following command in the root directory to build the image:
+    docker build -t flask-app -f Docker/Dockerfile .
+
+    my-flask-app:latest: The name and tag of your Docker image.
+    .: Refers to the current directory containing the Dockerfile.
+
+
+To verify the image:
+    docker images
+
+Step 5: Test the Docker Image Locally
+Run the Docker container to test it:
+
+    docker run -p 5000:5000 my-flask-app:latest
+    
+Visit http://localhost in your browser

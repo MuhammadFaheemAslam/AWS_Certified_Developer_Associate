@@ -1,0 +1,9 @@
+# Ignore the virtual environment directory
+MyFlaskVenv/
+
+# Ignore other unnecessary files
+.git/
+.gitignore
+*.pyc
+__pycache__/
+*.log
