@@ -46,6 +46,16 @@ or Amazon EKS by specifying the ECR image URL in your deployment configuration.
 ---------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------
 
+deletion of ECR using Click
+
+aws ecr delete-repository \
+    --repository-name flask-app-repo \
+    --region ap-northeast-1 \
+    --force
+
+
+aws ecr delete-repository --repository-name flask-app-repo-sdk  --region ap-northeast-1  --force
+
 
 
 

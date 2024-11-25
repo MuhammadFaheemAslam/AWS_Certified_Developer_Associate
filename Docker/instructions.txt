@@ -27,7 +27,7 @@ The Dockerfile defines how your application is containerized further see Dockerf
 
 Step 4: Build the Docker Image
 Run the following command in the root directory to build the image:
-    docker build -t flask-app -f Docker/Dockerfile .
+    docker build -t flask-app-docker-image -f Docker/Dockerfile .
 
     my-flask-app:latest: The name and tag of your Docker image.
     .: Refers to the current directory containing the Dockerfile.
