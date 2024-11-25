@@ -1,0 +1,71 @@
+Create a cluster that uses the default VPC.
+
+Before you begin, assign the appropriate IAM permission. For more information, see Amazon ECS cluster examples.
+
+Open the console at https://console.aws.amazon.com/ecs/v2.
+
+From the navigation bar, select the Region to use.
+
+In the navigation pane, choose Clusters.
+
+On the Clusters page, choose Create cluster.
+
+Under Cluster configuration, for Cluster name, enter a unique name.
+
+The name can contain up to 255 letters (uppercase and lowercase), numbers, and hyphens.
+
+(Optional) To turn on Container Insights, expand Monitoring, and then turn on Use Container Insights.
+
+(Optional) To help identify your cluster, expand Tags, and then configure your tags.
+
+[Add a tag] Choose Add tag and do the following:
+
+For Key, enter the key name.
+
+For Value, enter the key value.
+
+[Remove a tag] Choose Remove to the right of the tag’s Key and Value.
+
+Choose Create. 
+
+To create an ECS cluster with Fargate:
+1.Create an ECS Cluster:
+    aws ecs create-cluster --cluster-name my-cluster region name
+
+
+2.Create a Task Definition (task-definition.json)
+     Register the task definition:
+        aws ecs register-task-definition --cli-input-json file://task-definition.json --region ap-northeast-1
+
+
+3: Create a Service to Run the Task
+Create a VPC, Subnets, and Security Groups (if not already created) to allow the ECS task to run in a secured network.
+
+Run the ECS service (this will run your task continuously on Fargate):
+    aws ecs create-service --cluster my-cluster --service-name my-app-service --task-definition my-app-task --desired-count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[subnet-0e81f1c43fd11df94,subnet-0545595e819f1212a],securityGroups=[sg-040288cdc4d6f9472],assignPublicIp=ENABLED}" --region ap-northeast-1
+
+    Replace subnet-xxxxxx with your subnet ID.
+    Replace sg-xxxxxx with your security group ID.
+    assignPublicIp=ENABLED gives the task a public IP so you can access it.
+
+
+4: Verify the Service and Access the Application
+    1.Check the ECS service status:
+        aws ecs describe-services --cluster my-cluster --services my-app-service --region ap-northeast-1
+
+    2.Get the public IP of your Fargate task:
+        Use the ECS console or the AWS CLI to get the public IP of the task. If you enabled public IP assignment in the network configuration, you can find it by describing the task's ENI:
+            aws ecs list-tasks --cluster my-cluster --service-name my-app-service --region ap-northeast-1
+        
+        Then, describe the task and its network interface:
+            aws ecs describe-tasks --cluster my-cluster --tasks <task-id> --region ap-northeast-1
+
+Access your application via the public IP and port (e.g., http://<public-ip>:5000).
+
+
+----------------------------------------------------
+-----------------------------------------------------
+
+
+second method to deploy app in AWS ECS is using python script
+you can see the file pythonScript.py 
