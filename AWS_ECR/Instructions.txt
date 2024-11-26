@@ -36,7 +36,7 @@ Use the AWS CLI to retrieve an authentication token:
         docker push 156041400331.dkr.ecr.ap-northeast-1.amazonaws.com/flask-app-repo:latest
 
 4. Pull an Image from the Repository
-Pull the image when needed
+    Pull the image when needed
 
 5. Integrate with AWS Services
 Use the stored image with Amazon ECS, AWS Lambda (container images), 
@@ -54,7 +54,7 @@ aws ecr delete-repository \
     --force
 
 
-aws ecr delete-repository --repository-name flask-app-repo-sdk  --region ap-northeast-1  --force
+    aws ecr delete-repository --repository-name flask-app-repo-sdk  --region ap-northeast-1  --force
 
 
 
