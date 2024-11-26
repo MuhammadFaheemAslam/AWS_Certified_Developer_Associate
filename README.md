@@ -8,16 +8,38 @@ We are going to use AWS CLI tool as well to work with AWS Services
 
 https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html
 
-also create a user through aws managment console with the appropriate policy
+Also create a user through aws managment console with the appropriate policy
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+1.1 Docker image setup by using flask app
+
+    1.Create Your Flask App
+    2.Create a Dockerfile
+    3.Build and Test the Docker Image Locally
+
+For more detailed look into the docker directory
+
 
 
 2:Amazon Elastic Container Registry (ECR)
  is a fully managed container image registry provided by AWS. It allows you to securely store, manage, and deploy container images (such as Docker images). ECR integrates seamlessly with AWS container services like Amazon ECS, EKS, and AWS Fargate, as well as with CI/CD tools for streamlined workflows.
 
+        
+    1.Create an ECR Repository
+    2.Authenticate Docker with ECR
+    3.Tag the Docker Image
+    4.Push the Image to ECR
+
 Go to AWS ECR folder for more details
 
 Docker image creation from root folder
 docker build -t flask-app -f Docker/Dockerfile .
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
 
 3:Amazon ECS (Elastic Container Service) --with Fargate or EC2 instances using the AWS CLI
 
@@ -57,3 +79,54 @@ Prerequisites
 
 --For further details see AWS_ECS directory
 
+
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+
+4. Amazon Elastic Kubernetes Service (Amazon EKS)
+
+    What is AWS EKS?
+    AWS Elastic Kubernetes Service (EKS) is a managed Kubernetes service that makes it easy to run Kubernetes on AWS without needing to install, operate, and maintain Kubernetes control planes or nodes.
+
+
+Prerequisites
+    AWS CLI installed and configured.
+    kubectl installed.
+    AWS IAM role with required EKS permissions.
+    AWS EKS CLI (eksctl) installed.
+    Docker installed for containerizing your app.
+
+
+Roadmap for Application Developers
+To deploy your Flask app as a Docker image in AWS Elastic Kubernetes Service (EKS), you need to follow these detailed steps:
+    Step1: Prepare Your Flask Application
+        use the existing flask app that we created in first session
+
+    Step 2: Push the Docker Image to Amazon Elastic Container Registry (ECR)
+        We already have an docker image so we will use this
+        
+    Step 3: Set Up AWS EKS
+        1.Create an EKS Cluster
+        2.Update kubeconfig
+        3.Verify the Cluster
+
+
+    Step 4: Deploy Flask App to EKS
+        1.Create a Kubernetes Deployment Manifest
+        2.Create a Kubernetes Service Manifest
+        3.Apply the Manifests
+        4.Verify the Deployment
+
+
+    Step 5: Access the Application
+        1.Get the External IP
+        2.Access the Flask App
+
+
+    Step 6: (Optional) Monitor and Optimize
+        1.Monitor Using CloudWatch
+        2.Autoscale the Application
+
+    See AWS_EKS directory for detailed 

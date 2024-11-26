@@ -1,0 +1,103 @@
+Using CLI 
+
+Step 1: Create an EKS Cluster
+  Create a Cluster using eksctl:
+
+      eksctl create cluster \
+      --name my-eks-cluster \
+      --region ap-northeast-1 \
+      --nodegroup-name standard-workers \
+      --node-type t3.medium \
+      --nodes 3 \
+      --nodes-min 1 \
+      --nodes-max 4 \
+      --managed
+
+eksctl create cluster --name my-eks-cluster --region ap-northeast-1 --nodegroup-name standard-workers --node-type t3.medium --nodes 3 --nodes-min 1 --nodes-max 4 --managed
+
+  Parameters Explained:
+      --name: Cluster name.
+      --region: AWS region.
+      --node-type: EC2 instance type.
+      --nodes: Number of worker nodes.
+      --managed: Managed node group by AWS.
+
+
+  Validate Cluster Creation: After creation, validate the cluster is connected:
+
+    aws eks --region ap-northeast-1 update-kubeconfig --name my-eks-cluster
+    kubectl get svc
+
+Step 2: Containerize Your Application
+  Write a Dockerfile for Your Application: Example for a Python Flask app:
+  We will use our already created images in our previous sessions when we worked on 
+  Flask app and Docker image and Push the image on AWS ECR we use this ECR repository
+
+
+Step 3: Deploy the Application on EKS
+  1.Create a Kubernetes Deployment Manifest:
+    --deployment.yaml
+
+  2.Create a Kubernetes Service Manifest:
+    --service.yaml
+
+
+  3.Apply the Manifests (Apply the Deployment and Service):
+
+    kubectl apply -f deployment.yaml
+    kubectl apply -f service.yaml
+
+
+  4.Verify the Deployment:
+
+    kubectl get deployments
+    kubectl get services
+
+  Access the Application: Note the external IP of the service and visit it in your browser:
+
+    kubectl get svc flask-app-service
+
+Step 4: Access the Application
+  Get the External IP:
+    kubectl get service flask-app-service
+
+  Access the Flask App:
+    Open a browser and navigate to http://<EXTERNAL-IP>.
+
+
+
+Step 6: (Optional) Monitor and Optimize
+  1.Monitor Using CloudWatch:
+    Enable logging for EKS and set up dashboards in Amazon CloudWatch.
+
+  2.Autoscale the Application:
+    Enable Horizontal Pod Autoscaler
+      kubectl autoscale deployment flask-app --cpu-percent=50 --min=2 --max=10
+
+
+
+CLEAN UP Amazon EKS (Elastic Kubernetes Service)
+
+1. Delete Node Groups
+    eksctl delete nodegroup --cluster my-eks-cluster --region ap-northeast-1 --name standard-workers
+
+2. Delete the EKS Cluster
+    eksctl delete cluster --name my-eks-cluster --region ap-northeast-1
+
+3. Clean Up Other Resources
+    aws iam delete-role --role-name <role-name>
+
+4. Security Groups
+    aws ec2 delete-security-group --group-id <security-group-id>
+
+5. VPC and Subnets
+    aws ec2 delete-vpc --vpc-id <vpc-id>
+
+
+
+
+
+
+
+
+
