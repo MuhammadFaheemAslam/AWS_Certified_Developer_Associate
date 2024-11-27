@@ -98,6 +98,11 @@ Prerequisites
     AWS EKS CLI (eksctl) installed.
     Docker installed for containerizing your app.
 
+You will need several AWS and Kubernetes tools to manage EKS:
+    AWS CLI: The AWS Command Line Interface (CLI) lets you interact with AWS services, including EKS.
+    kubectl: Kubernetes CLI for interacting with the Kubernetes API server.
+    eksctl: A simple CLI tool to create and manage EKS clusters.
+
 
 Roadmap for Application Developers
 To deploy your Flask app as a Docker image in AWS Elastic Kubernetes Service (EKS), you need to follow these detailed steps:
@@ -130,3 +135,31 @@ To deploy your Flask app as a Docker image in AWS Elastic Kubernetes Service (EK
         2.Autoscale the Application
 
     See AWS_EKS directory for detailed 
+
+Which API Should You Use?
+
+    Use the Kubernetes API (via kubectl) for interacting with and managing your containerized applications, deployments, and resources.
+    Use the AWS EKS API (via the AWS CLI or SDK) for managing EKS-specific resources, including clusters, networking, and IAM roles.
+
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+
+5.Getting started with Elastic Beanstalk
+
+    Prerequisites
+        AWS CLI
+        Elastic Beanstalk CLI (EB CLI)
+        Make sure your AWS IAM user has the necessary permissions to work with Elastic Beanstalk, EC2, and other AWS resources (like S3, RDS, etc.).
+        Application Code:
+            Prepare the application code you want to deploy (e.g., a simple Python Flask app, Django app, Node.js, etc.).
+
+
+    Initialize the project: eb init
+    Create environment: eb create my-env
+    Deploy the app: eb deploy
+    Open the app: eb open
+    Check status: eb status
+    View logs: eb logs
+    Terminate environment: eb terminate
