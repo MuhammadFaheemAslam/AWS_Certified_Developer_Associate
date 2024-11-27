@@ -63,34 +63,97 @@ Step 5: Integrate API Gateway with Lambda
 
 
 Step 6: Deploy the API and Generate an Invoke URL
-Create a deployment stage for the API:
-bash
-Copy code
-aws apigateway create-deployment --rest-api-id <api-id> --stage-name prod
-Get the Invoke URL for the deployed API:
-bash
-Copy code
-echo "Invoke URL: https://<api-id>.execute-api.us-east-1.amazonaws.com/prod/myresource"
+    Create a deployment stage for the API:
+        aws apigateway create-deployment --rest-api-id rbtx9ghi2e --stage-name prod
+
+    Get the Invoke URL for the deployed API:
+        echo "Invoke URL: https://rbtx9ghi2e.execute-api.us-west-1.amazonaws.com/prod/myresource"
+
+
 Step 7: Test the API by Making a GET Request
-Use curl or Postman to make a GET request to the API.
-bash
-Copy code
-curl https://<api-id>.execute-api.us-east-1.amazonaws.com/prod/myresource
-You should receive a response like this:
-json
-Copy code
-{
-  "statusCode": 200,
-  "body": "\"Hello from Lambda!\""
-}
+    Use curl or Postman to make a GET request to the API.
+        curl https://rbtx9ghi2e.execute-api.us-west-1.amazonaws.com/prod/myresource
+
+    You should receive a response like this:
+
+    {
+    "statusCode": 200,
+    "body": "\"Hello from Lambda!\""
+    }
+
+
 Step 8: Monitor Lambda Logs Using CloudWatch
-Check the logs of the Lambda function in CloudWatch Logs. First, find the log group name:
-bash
-Copy code
-aws logs describe-log-groups --log-group-name-prefix "/aws/lambda/MyLambdaFunction"
-View the logs in the log group:
-bash
-Copy code
-aws logs get-log-events --log-group-name "/aws/lambda/MyLambdaFunction" --log-stream-name <log-stream-name>
+    Check the logs of the Lambda function in CloudWatch Logs. First, find the log group name:
+        aws logs describe-log-groups --log-group-name-prefix "/aws/lambda/MyLambdaFunction"
+
+
+    View the logs in the log group:
+a       ws logs get-log-events --log-group-name "/aws/lambda/MyLambdaFunction" --log-stream-name <log-stream-name>
+
 This allows you to monitor your Lambda function execution logs.
+
+
+
+--------------------------------------------------------------------------------------------------------------
+Cleaning up the resources you created
+
+
+Step 1: Delete the API Gateway
+    List all REST APIs:
+        ws apigateway get-rest-apis
+
+    Delete the specific REST API:
+        aws apigateway delete-rest-api --rest-api-id rbtx9ghi2e
+
+This will delete the API Gateway and all associated resources (stages, methods, etc.).
+
+Step 2: Delete the Lambda Function
+    Delete the Lambda function:
+        aws lambda delete-function --function-name MyLambdaFunction
+
+    Confirm that the function is deleted
+        aws lambda list-functions
+
+Step 3: Delete IAM Role and Policy
+    Detach the inline policy associated with the IAM role:
+        aws iam delete-role-policy --role-name LambdaExecutionRole --policy-name LambdaBasicExecutionPolicy
+
+    Delete the IAM role:
+        aws iam delete-role --role-name LambdaExecutionRole
+
+Step 4: Clean Up CloudWatch Logs
+    List the log groups:
+        aws logs describe-log-groups --log-group-name-prefix "/aws/lambda/MyLambdaFunction"
+    
+    Delete the log group:
+        aws logs delete-log-group --log-group-name "/aws/lambda/MyLambdaFunction"
+
+    (Optional) Delete API Gateway log groups (if logging was enabled):
+        aws logs describe-log-groups --log-group-name-prefix "API-Gateway-Execution-Logs"
+        aws logs delete-log-group --log-group-name "API-Gateway-Execution-Logs_<rest-api-id>/prod"
+
+
+Step 5: Delete Other Associated Resources
+    If you created additional resources (e.g., S3 buckets, DynamoDB tables), delete them as follows:
+
+    S3 Buckets:
+        aws s3 rb s3://<bucket-name> --force
+
+    DynamoDB Tables:
+        aws dynamodb delete-table --table-name <table-name>
+
+
+Step 6: Verify Cleanup
+    After completing all steps, verify that no resources are left:
+    List APIs:
+    aws apigateway get-rest-apis
+
+    List Lambda functions:
+        aws lambda list-functions
+
+    List IAM roles:
+        aws iam list-roles
+
+    List log groups:
+        aws logs describe-log-groups
 
