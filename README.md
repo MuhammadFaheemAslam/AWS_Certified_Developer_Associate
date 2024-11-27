@@ -163,3 +163,43 @@ Which API Should You Use?
     Check status: eb status
     View logs: eb logs
     Terminate environment: eb terminate
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+
+AWS Lambda
+
+We are using this as a web application developer
+
+Deploying a Serverless Web Application (End-to-End)
+    Frontend: Build a web or mobile frontend using HTML, CSS, JavaScript, React, etc.
+    Backend: Use Lambda functions behind an API Gateway to serve as the backend.
+    Authentication: Integrate Amazon Cognito for user authentication and authorization.
+    Database: Use DynamoDB as a serverless NoSQL database to store user data or application data.
+    Hosting: Host the frontend using Amazon S3 (static website hosting) or Amazon CloudFront.
+
+
+Prerequisites
+    Before you can create the example app, make sure you have the required command line tools installed.
+    AWS CLI
+        You can manually deploy the resources for your app using either the AWS Management Console or the AWS CLI. 
+    AWS SAM CLI
+        If you want to deploy the example app using AWS SAM, you need to install both the AWS CLI and the AWS SAM CLI.
+
+
+1.Create IAM Role for Lambda using the AWS CLI.
+2.Write the Lambda function in Python and create a deployment package.
+3.Create an API Gateway REST API, resource, and method.
+4.Integrate API Gateway with Lambda.
+5.Deploy the API and generate an Invoke URL.
+6.Grant API Gateway permissions to invoke the Lambda function.
+7.Test the API by making a GET request.
+8.Monitor Lambda logs using CloudWatch.
+
