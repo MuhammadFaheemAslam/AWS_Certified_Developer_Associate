@@ -1,0 +1,96 @@
+Step 1: Create IAM Role for Lambda using the AWS CLI
+    Create a trust policy JSON file (e.g., trust-policy.json), which defines which AWS service is allowed to assume this role.
+     see the file for the code
+    Create the IAM role using the AWS CLI. This assumes the role with a policy allowing basic Lambda execution permissions (logs to CloudWatch).
+        aws iam create-role --role-name LambdaExecutionRole --assume-role-policy-document file://trust-policy.json
+    Add iam:PassRole Permission to Your IAM User/Role
+        Identify the IAM user or role that you are using to run the AWS CLI commands.
+    Attach the updated policy to your user or role using the AWS Management Console or CLI.
+        aws iam put-user-policy --user-name EBCLI --policy-name PassRolePolicy --policy-document file://pass-role-policy.json
+    
+
+    Attach the AWSLambdaBasicExecutionRole policy to the role for CloudWatch Logs permissions.
+        aws iam attach-role-policy --role-name LambdaExecutionRole --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+    Verify the role creation by checking the attached policies.
+        aws iam list-attached-role-policies --role-name LambdaExecutionRole
+
+
+Step 2: Write the Lambda Function in Python and Create a Deployment Package
+    Create a Python file for the Lambda function (e.g., lambda_function.py).
+    see the file for the code
+
+    Create a deployment package. This involves zipping your Python file into a .zip file.
+        zip function.zip lambda_function.py
+
+
+Step 3: Create the Lambda Function Using the AWS CLI
+    Create the Lambda function with the create-function command, specifying the role ARN for the IAM role you created earlier. First, get the role ARN:
+        aws iam get-role --role-name LambdaExecutionRole
+
+    Use the ARN returned (e.g., arn:aws:iam::123456789012:role/LambdaExecutionRole) in the following command:
+        aws lambda create-function --function-name MyLambdaFunction --runtime python3.13 --role arn:aws:iam::156041400331:role/LambdaExecutionRole --handler lambda_function.lambda_handler --zip-file fileb://function.zip
+
+    This creates the Lambda function with the provided name, runtime, handler, and deployment package.
+
+
+
+Step 4: Create an API Gateway REST API, Resource, and Method
+    Create the REST API using the create-rest-api command:
+        aws apigateway create-rest-api --name MyApi
+
+    Get the API ID of the newly created API from the response.
+    Create a resource under the root resource of the API. First, get the root resource ID:
+        aws apigateway get-resources --rest-api-id rbtx9ghi2e
+
+    Then, create a new resource:
+        aws apigateway create-resource --rest-api-id rbtx9ghi2e --parent-id 6tmuqfrp61 --path-part myresource
+    
+    Create a GET method for the new resource:
+        aws apigateway put-method --rest-api-id rbtx9ghi2e --resource-id x2hmfb --http-method GET --authorization-type NONE
+
+
+Step 5: Integrate API Gateway with Lambda
+    Create the integration between the GET method and the Lambda function:
+        aws apigateway put-integration --rest-api-id rbtx9ghi2e --resource-id x2hmfb --http-method GET --integration-http-method POST --type AWS_PROXY --uri arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:MyLambdaFunction/invocations
+
+    Grant API Gateway permission to invoke the Lambda function. This is required for the integration to work:
+        --aws lambda add-permission --function-name MyLambdaFunction --principal apigateway.amazonaws.com --statement-id <unique-id> --action lambda:InvokeFunction
+        aws lambda add-permission --function-name MyLambdaFunction --principal apigateway.amazonaws.com --statement-id 7E3D5CF4-9FFD-43B5-B14B-04CABE198D83 --action lambda:InvokeFunction
+
+        you can get <unique-id> by using bash command   
+            uuidgen
+
+
+Step 6: Deploy the API and Generate an Invoke URL
+Create a deployment stage for the API:
+bash
+Copy code
+aws apigateway create-deployment --rest-api-id <api-id> --stage-name prod
+Get the Invoke URL for the deployed API:
+bash
+Copy code
+echo "Invoke URL: https://<api-id>.execute-api.us-east-1.amazonaws.com/prod/myresource"
+Step 7: Test the API by Making a GET Request
+Use curl or Postman to make a GET request to the API.
+bash
+Copy code
+curl https://<api-id>.execute-api.us-east-1.amazonaws.com/prod/myresource
+You should receive a response like this:
+json
+Copy code
+{
+  "statusCode": 200,
+  "body": "\"Hello from Lambda!\""
+}
+Step 8: Monitor Lambda Logs Using CloudWatch
+Check the logs of the Lambda function in CloudWatch Logs. First, find the log group name:
+bash
+Copy code
+aws logs describe-log-groups --log-group-name-prefix "/aws/lambda/MyLambdaFunction"
+View the logs in the log group:
+bash
+Copy code
+aws logs get-log-events --log-group-name "/aws/lambda/MyLambdaFunction" --log-stream-name <log-stream-name>
+This allows you to monitor your Lambda function execution logs.
+
