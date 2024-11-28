@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  # Lambda Function to Create Tasks
+  CreateTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: create_task.lambda_handler
+      Runtime: python3.9
+      CodeUri: src/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: TaskTable
+      Events:
+        CreateTaskApi:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: POST
+
+  # Lambda Function to List Tasks
+  ListTasksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: list_tasks.lambda_handler
+      Runtime: python3.9
+      CodeUri: src/
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: TaskTable
+      Events:
+        ListTasksApi:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: GET
+
+  # Lambda Function to Delete Tasks
+  DeleteTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: delete_task.lambda_handler
+      Runtime: python3.9
+      CodeUri: src/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: TaskTable
+      Events:
+        DeleteTaskApi:
+          Type: Api
+          Properties:
+            Path: /tasks/{taskId}
+            Method: DELETE
+
+  # Lambda Function triggered by EventBridge
+  EventBridgeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: event_bridge.lambda_handler
+      Runtime: python3.9
+      CodeUri: src/
+      Events:
+        TaskDeletedEvent:
+          Type: EventBridgeRule
+          Properties:
+            Pattern:
+              source:
+                - "com.taskmanager"
+
+  # DynamoDB Table to Store Tasks
+  TaskTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: taskId
+        Type: String
+      TableName: TaskTable

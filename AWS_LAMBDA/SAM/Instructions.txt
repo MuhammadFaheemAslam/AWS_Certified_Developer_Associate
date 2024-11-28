@@ -1,0 +1,110 @@
+Building a serverless application using AWS Lambda, API Gateway, DynamoDB, and EventBridge, with an example application for managing "Tasks" (Create, List, Delete).
+
+Overview of the Application
+1.Lambda Functions: Backend logic for the application.
+    1.1.CreateTaskFunction: Adds tasks to a DynamoDB table.
+    1.2.ListTasksFunction: Retrieves tasks from the table.
+    1.3.DeleteTaskFunction: Deletes a task.
+    1.4.EventBridgeFunction: Triggers when a task is deleted.
+2.API Gateway: HTTP interface for invoking the Lambda functions.
+3.DynamoDB: Stores tasks with taskId as the primary key.
+4.EventBridge: Listens for events when a task is deleted.
+
+
+Prerequisites
+    AWS CLI installed: Install AWS CLI.
+    SAM CLI installed: Install SAM CLI.
+    AWS Account
+    Docker installed 
+
+Step 1: Initialize the Project
+    Use the SAM CLI to initialize a serverless project
+        sam init
+    Follow the prompts:
+        Template source: AWS Quick Start Templates.
+        Runtime: Python 3.9 (or another runtime of your choice).
+        Template: Hello World Example.
+        Project name: TaskManagerApp.
+    This creates a project folder named TaskManagerApp with the basic structure.
+
+
+Step 2: Update template.yaml
+    Edit the template.yaml file to define your resources.
+
+
+Step 3: Write the Application Code
+    Create the src/ directory and write the Lambda function code:
+        Create src/create_task.py:
+            mkdir src
+            src/create_task.py
+            src/list_tasks.py
+            src/delete_task.py
+            src/event_bridge.py
+        These are my application code you can create according to your requirements
+
+Step 4: Build the Application
+    Build the deployment package using SAM CLI:
+        sam build
+
+
+Step 5: Deploy the Application
+    Deploy the application using SAM CLI:
+        sam deploy --guided
+
+    During the guided deployment:
+        Stack name: TaskManagerStack
+        AWS Region: Select your region (e.g., us-east-1).
+        Save arguments to configuration file: Yes (makes future deployments easier).
+
+    This command:
+        Packages your application.
+        Uploads it to an S3 bucket.
+        Creates a CloudFormation stack to deploy your serverless resources.
+
+
+
+Step 6: Test the Application
+After deployment, the API Gateway endpoint will be displayed. Use it to test the application.
+
+    1. Create a Task
+        Use curl or Postman to send a POST request:
+            curl -X POST https://<API_ID>.execute-api.<region>.amazonaws.com/Prod/tasks \
+            -H "Content-Type: application/json" \
+            -d '{"name": "Learn SAM"}'
+        
+    2. List Tasks
+        Retrieve tasks with a GET request:  
+            curl https://<API_ID>.execute-api.<region>.amazonaws.com/Prod/tasks
+ 
+    3. Delete a Task
+        Delete a task using its taskId:
+            curl -X DELETE https://<API_ID>.execute-api.<region>.amazonaws.com/Prod/tasks/<taskId>
+
+----------
+    API URL directly in the API Gateway console:
+    Go to the API Gateway Console:
+        In the AWS Management Console, search for and select API Gateway.
+            Select Your API:
+            Find the API you created for your application. It will typically be named something based on your project (e.g., TaskManagerAPI).
+            Get the Invoke URL:
+            In the left navigation pane, under Stages, select the stage (e.g., prod).
+        curl https://47skzy5pyi.execute-api.us-west-1.amazonaws.com/Prod/tasks
+------------
+
+
+Step 7: Monitor Events
+    To check logs for Lambda functions, use:
+        aws logs describe-log-groups
+        aws logs get-log-events --log-group-name "/aws/lambda/CreateTaskFunction" --log-stream-name <stream-name>
+
+    To check EventBridge events:
+        aws events list-rules
+        aws events list-targets-by-rule --rule TaskDeletedEvent
+  
+
+Step 8: Clean Up Resources
+    When you're done testing, delete the stack to avoid incurring charges:
+        aws cloudformation delete-stack --stack-name TaskManagerStack
+
+
+
