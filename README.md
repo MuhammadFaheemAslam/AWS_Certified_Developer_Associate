@@ -174,7 +174,7 @@ Which API Should You Use?
 ----------------------------------------------------------------------------------------------------
 
 
-AWS Lambda
+6.AWS Lambda
 
 We are using this as a web application developer
 
@@ -203,3 +203,50 @@ Prerequisites
 7.Test the API by making a GET request.
 8.Monitor Lambda logs using CloudWatch.
 
+6.1 SAM (Serverless )
+
+Building a serverless application using AWS Lambda, API Gateway, DynamoDB, and EventBridge, with an example application for managing "Tasks" (Create, List, Delete).
+
+Overview of the Application
+1.Lambda Functions: Backend logic for the application.
+    1.1.CreateTaskFunction: Adds tasks to a DynamoDB table.
+    1.2.ListTasksFunction: Retrieves tasks from the table.
+    1.3.DeleteTaskFunction: Deletes a task.
+    1.4.EventBridgeFunction: Triggers when a task is deleted.
+2.API Gateway: HTTP interface for invoking the Lambda functions.
+3.DynamoDB: Stores tasks with taskId as the primary key.
+4.EventBridge: Listens for events when a task is deleted.
+
+
+
+Full Command Sequence
+Here’s the summarized sequence:
+
+    # Initialize the project
+    sam init
+
+    # Edit the template.yaml
+    nano template.yaml
+
+    # Write the application code
+    mkdir src
+    nano src/create_task.py
+    nano src/list_tasks.py
+    nano src/delete_task.py
+    nano src/event_bridge.py
+
+    # Build and deploy the application
+    sam build
+    sam deploy --guided
+
+    # Test the application
+    curl -X POST https://<API_ID>.execute-api.<region>.amazonaws.com/Prod/tasks -H "Content-Type: application/json" -d '{"name": "Learn SAM"}'
+    curl https://<API_ID>.execute-api.<region>.amazonaws.com/Prod/tasks
+    curl -X DELETE https://<API_ID>.execute-api.<region>.amazonaws.com/Prod/tasks/<taskId>
+
+    # Monitor logs
+    aws logs describe-log-groups
+    aws logs get-log-events --log-group-name "/aws/lambda/CreateTaskFunction" --log-stream-name <stream-name>
+
+    # Clean up resources
+    aws cloudformation delete-stack --stack-name TaskManagerStack
